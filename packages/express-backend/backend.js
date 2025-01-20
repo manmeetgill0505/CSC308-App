@@ -46,7 +46,9 @@ const findUserByName = (name => {
 		(user) => user["name"] === name
 	);
 });
-
+const findUserById = (id => 
+	users["users_list"].find((user) => user["id"] === id));
+	
 app.get("/", (req, res) => {
 	res.send("Hello World!");
 });
@@ -64,7 +66,16 @@ app.get("/users", (req, res) => {
 	}
 });
 //sends users if users are requested
-
+app.get("/users/:id", (req, res) => {
+	const id = req.params["id"]; //or req.params.id
+	let result = findUserById(id);
+	if (result === undefined) {
+		res.status(404).send("Resource not found.");
+	}
+	else {
+		res.send(result);
+	}
+});	
 app.listen(port, () => {
 	console.log(
 		`Example app listening at http://localhost:${port}`
