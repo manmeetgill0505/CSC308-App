@@ -48,7 +48,14 @@ const findUserByName = (name => {
 });
 const findUserById = (id => 
 	users["users_list"].find((user) => user["id"] === id));
-	
+
+const addUser = (user) => {
+	users["users_list"].push(user);
+	return user;
+};//take a user object as input
+
+//helper functions
+
 app.get("/", (req, res) => {
 	res.send("Hello World!");
 });
@@ -74,8 +81,15 @@ app.get("/users/:id", (req, res) => {
 	}
 	else {
 		res.send(result);
-	}
-});	
+	} //sends status to the client
+});
+
+app.post("/users", (req, res) => {
+	const userToAdd = req.body; /* Extracts user data from the request's body */
+	addUser(userToAdd);
+	res.send(); //Sends a response back to the client
+});
+
 app.listen(port, () => {
 	console.log(
 		`Example app listening at http://localhost:${port}`
