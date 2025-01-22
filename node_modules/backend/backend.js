@@ -1,6 +1,7 @@
 //backend.js 
 import express from "express";
-//imported the express module 
+import cors from "cors";
+//imported the express module and cors module
 
 const app = express();
 //created an instance of express
@@ -8,8 +9,9 @@ const app = express();
 const port = 8000;
 //port number we are using 
 
+app.use(cors());
 app.use(express.json());
-//standard configuration so in JSON format
+/*standard configuration with express to enable JSON format and with cors to enable all CORS request*/
 
 const users = {
 	users_list: [
