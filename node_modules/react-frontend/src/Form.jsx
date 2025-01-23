@@ -3,12 +3,13 @@ import React, { useState } from "react";
 
 function Form(props) {
 	const [person, setPerson] = useState({
+		id: "",
 		name: "",
 		job: ""
 	});
 	
 	function handleChange(event) {
-		const { name, value } = event.target;
+		const {name, value } = event.target;
 		if (name === "job")
 			setPerson({name: person["name"], job: value });
 		else

@@ -1,11 +1,11 @@
 //backend.js 
 import express from "express";
 import cors from "cors";
-//imported the express module and cors module
+import {nanoid} from "nanoid";
+//imported the express module, cors module, and uuid library
 
 const app = express();
 //created an instance of express
-
 const port = 8000;
 //port number we are using 
 
@@ -52,15 +52,17 @@ const findUserById = (id =>
 	users["users_list"].find((user) => user["id"] === id));
 
 const addUser = (user) => {
+	user["id"] = nanoid() //generates a UUID
 	users["users_list"].push(user);
 	return user;
 };//take a user object as input
 
 const deleteUserById = (id => {
+	console.log(id);
 	const deletion = users["users_list"].findIndex(
 		(user) => user["id"] === id
 	);
-	console.log("Before deletion:", users["users_list"]);
+
 	if (deletion !== -1) {
 		users["users_list"].splice(deletion, 1);
 		return true;
@@ -125,8 +127,10 @@ app.delete("/users/:id", (req, res) => {
 
 app.post("/users", (req, res) => {
 	const userToAdd = req.body; /* Extracts user data from the request's body */
-	addUser(userToAdd);
-	res.send(); //Sends a response back to the client
+	let user = addUser(userToAdd);
+	if (user !== undefined) {
+		res.status(201).json(user); //Sends a response back to the client
+	}
 });
 
 app.listen(port, () => {
