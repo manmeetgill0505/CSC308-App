@@ -52,7 +52,7 @@ const findUserById = (id =>
 	users["users_list"].find((user) => user["id"] === id));
 
 const addUser = (user) => {
-	user["id"] = nanoid() //generates a UUID
+	user.id = nanoid() //generates a UUID
 	users["users_list"].push(user);
 	return user;
 };//take a user object as input
