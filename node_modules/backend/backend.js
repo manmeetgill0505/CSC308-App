@@ -1,4 +1,5 @@
-//backend.js 
+//backend.js
+import userHelper from "./user-services.js"; 
 import express from "express";
 import cors from "cors";
 import {nanoid} from "nanoid";
@@ -12,7 +13,7 @@ const port = 8000;
 app.use(cors());
 app.use(express.json());
 /*standard configuration with express to enable JSON format and with cors to enable all CORS request*/
-
+/*
 const users = {
 	users_list: [
 	{
@@ -43,6 +44,7 @@ const users = {
 };
 //We defined list of users and theri random ids (pairs and keys)
 
+/*
 const findUserByName = (name => {
 	return users["users_list"].filter(
 		(user) => user["name"] === name
@@ -78,6 +80,7 @@ const findUserByNameAndJob = (name, job) => {
 	);
 }
 //helper functions
+*/
 
 app.get("/", (req, res) => {
 	res.send("Hello World!");
@@ -85,52 +88,40 @@ app.get("/", (req, res) => {
 //Setting up the first API endpoint (sends a plain message for now)
 
 app.get("/users", (req, res) => {
-	const name = req.query.name;
-	const job = req.query.job;
-	
-	if (name != undefined && job == undefined) {
-		let result = findUserByName(name);
-		result = {users_list: result };
-		res.send(result);
-	}
-	else if (job != undefined && name != undefined) {
-		let result = findUserByNameAndJob(name, job);
-		result = {users_list: result};
-		res.send(result);
-	}
-	else {
-		res.send(users);
-	}
+	const {name, job} = req.query;
+	let users = userHelper.getUsers(name, job)
+		.then(users => res.json(users))
+        .catch(error => res.status(500).json({ error: error.message }));;
 });
 //sends users if users are requested
 app.get("/users/:id", (req, res) => {
 	const id = req.params["id"]; //or req.params.id
-	let result = findUserById(id);
-	if (result === undefined) {
-		res.status(404).send("Resource not found.");
-	}
-	else {
-		res.send(result);
-	} //sends status to the client
+	let result = userHelper.findUserById(id)
+		.then(result => res.json(result))
+		.catch(error => res.status(404).json({error: error.message}));;	
 });
 
 app.delete("/users/:id", (req, res) => {
 	const id = req.params.id;
-	let result = deleteUserById(id);
-	if (result === false) {
-		res.status(404).send("Resource not found.");
-	}
-	else {
-		res.send(users);
-	}
+	let result = userHelper.deleteUserById(id)
+		.then(result => {
+			if (result) {
+				res.status(200).json({ message: "User deleted successfully" });
+			} else {
+				res.status(404).json({ error: "User not found" });
+			}
+		})
+		.catch(error => res.status(404).json({error: error.message}));;
 });
 
 app.post("/users", (req, res) => {
 	const userToAdd = req.body; /* Extracts user data from the request's body */
-	let user = addUser(userToAdd);
-	if (user !== undefined) {
-		res.status(201).json(user); //Sends a response back to the client
-	}
+	//userToAdd.id = nanoid()
+	let user = userHelper.addUser(userToAdd)
+		.then(user => {
+			res.status(201).json(user);
+		})
+		.catch(error => res.status(400).json({ error: error.message }));;
 });
 
 app.listen(port, () => {

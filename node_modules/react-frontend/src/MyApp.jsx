@@ -5,7 +5,7 @@ import Form from "./Form"
 function MyApp() {
 	const [characters, setCharacters] = useState([]);
 	function deleteUser(index) {
-		const characterToDelete = characters[index].id;
+		const characterToDelete = characters[index]._id;
 		const url1 = "http://localhost:8000/users/";
 		const url2 = url1 + characterToDelete;
 		const promise = fetch(url2, {
@@ -62,7 +62,7 @@ function MyApp() {
 	useEffect(() => {
 		fetchUsers()
 			.then((res) => res.json())
-			.then((json) =>setCharacters(json["users_list"]))
+			.then((json) =>setCharacters(json))
 			.catch((error) => {console.log(error);});
 	},	[]	);
 	
